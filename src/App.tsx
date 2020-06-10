@@ -1,26 +1,26 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { aviaSales } from 'services/aviasales';
+import { Tickets } from 'containers/Tickets';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-function App() {
+export type SearchId = string | null;
+
+export const App = () => {
+  const [searchId, setSearchId] = useState<SearchId>(null);
+
+  useEffect( () => {
+    (async() => {
+      setSearchId(await aviaSales.getSearchId());
+    })()
+  }, [] )
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+    <div>
+      <ToastContainer />
+      searchId: {searchId}
 
-export default App;
+      <Tickets searchId={searchId} />
+    </div>
+  )
+}
