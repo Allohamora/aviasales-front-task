@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Button } from "components/Button";
 import { tTickets } from 'services/aviasales';
+import { Ticket } from "components/Ticket";
 import { Checkboxes, iCheckboxes } from 'containers/Checkboxes';
 
 interface TicketsProps {
-    tickets: tTickets,
-    searchHandler: () => Promise<void>,
+    tickets: tTickets
 };
 
 const Container = styled.div`
@@ -65,7 +65,7 @@ const initMainFilter: MainFilter = {
 }
 
 export const Tickets: React.FC<TicketsProps> = props => {
-    const { tickets, searchHandler } = props;
+    const { tickets } = props;
 
     const [ sideFilter, setSideFilter ] = useState<iCheckboxes>(initSideFilter);
     const [ mainFilter, setMainFilter ] = useState<MainFilter>(initMainFilter);
@@ -118,22 +118,19 @@ export const Tickets: React.FC<TicketsProps> = props => {
 
                 {
                     tickets
-                        ? <ul>
+                        ? <div>
                             {
                                 tickets.map( ticket => {
                                     const { price, carrier, segments } = ticket;
                                     const { date, destination } = segments[0];
-                                    const id = price + carrier + date + destination + origin;
+                                    const key = price + carrier + date + destination + origin;
 
                                     return (
-                                        <li key={id} >
-                                            <div>{price}</div>
-                                            <div>{date}</div>
-                                        </li>
+                                        <Ticket key={key} ticket={ticket} />
                                     )
                                 })
                             }
-                        </ul>
+                        </div>
                         : <div>Loading</div>
                 }
 

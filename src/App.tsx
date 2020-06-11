@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { aviaSales, tTickets } from 'services/aviasales';
 import { Tickets } from 'containers/Tickets';
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import styled from 'styled-components';
 import { Logo } from 'components/Logo';
 
-export type SearchId = string | null;
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Wrap = styled.div`
   max-width: 754px;
@@ -31,20 +30,20 @@ const Container = styled.div`
   
   padding-left: 5px;
   padding-right: 5px;
+
+  padding-bottom: 100px;
 `;
 
 export const App = () => {
-  const [searchId, setSearchId] = useState<SearchId>(null);
-  const [tickets, setTickets] = useState<tTickets>(null);
+  const [tickets, setTickets] = useState<tTickets | null>(null);
 
   useEffect( () => {
     const inner = async() => {
       try{
         const searchId = await aviaSales.getSearchId();
-        const tickets = await aviaSales.searchTickets(searchId);
+        const response = await aviaSales.searchTickets(searchId);
 
-        setSearchId(searchId);
-        setTickets(tickets.tickets);
+        setTickets(response.tickets.slice(0, 15));
       } catch(e) {
         console.error(e);
         toast("Ошибка при подключении к серверу! Повторная попытка через 30 секунд.", { type: "error" });
@@ -55,19 +54,6 @@ export const App = () => {
     inner();
   }, [] );
 
-  const searchHandler = async() => {
-    try{
-      const iTickets = await aviaSales.searchTickets(searchId);
-
-      if(  iTickets.tickets === null || tickets === null ) return;
-
-      setTickets([...tickets, ...iTickets.tickets]);
-    } catch(e) {
-      console.error(e);
-      toast("Ошибка во время загрузки новых билетов! Попробуйте позже!", {type: "error"});
-    }
-  }
-
   return (
     <Container>
 
@@ -76,7 +62,9 @@ export const App = () => {
       </Header>
 
       <Wrap>
-        <Tickets tickets={tickets} searchHandler={searchHandler} />
+        {
+          tickets && <Tickets tickets={tickets} />
+        }
       </Wrap>
 
       <ToastContainer />

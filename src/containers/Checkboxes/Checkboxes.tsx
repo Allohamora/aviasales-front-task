@@ -17,16 +17,17 @@ interface CheckboxesProps {
 
 const Container = styled.div`
     display: flex;
-
     flex-direction: column;
 
-    background: var(--white);
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
+    padding-bottom: 10px;
 
     min-width: 232px;
 
-    padding-bottom: 10px;
+    background: var(--checkboxes-bg-color);
+
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+
+    border-radius: 5px;
 `;
 
 const Title = styled.div`
@@ -39,7 +40,7 @@ const Title = styled.div`
     letter-spacing: 0.5px;
     text-transform: uppercase;
 
-    color: var(--black);
+    color: var(--checkboxes-title-color);
     padding: 20px 20px 10px 20px;
 `;
 

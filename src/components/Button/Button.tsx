@@ -13,16 +13,16 @@ const Container = styled.button<{selected?: boolean}>`
     outline: none;
     cursor: pointer;
 
-    border: 1px solid #DFE5EC;
-    color: var(--black);
-    background-color: var(--white);
+    border: 1px solid var(--button-border-color);
+    color: var(--button-color);
+    background-color: var(--button-bg-color);
 
     flex-grow: 1;
 
     ${props => props.selected && css`
-        background-color: var(--blue);
-        color: var(--white);
-        border-color: transparent;
+        background-color: var(--button-selected-bg-color);
+        color: var(--button-selected-color);
+        border-color: var(--button-selected-border-color);
     `}
 
     font-style: normal;

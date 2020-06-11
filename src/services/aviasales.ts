@@ -1,6 +1,4 @@
-import { SearchId } from "App";
-
-export interface Ticket {
+export interface iTicket {
     // Цена в рублях
     price: number
     // Код авиакомпании (iata)
@@ -35,7 +33,7 @@ export interface Ticket {
     ]
   }
 
-export type tTickets = Ticket[] | null;
+export type tTickets = iTicket[];
 
 class AviaSales {
     private baseUrl: string = "https://front-test.beta.aviasales.ru"
@@ -47,7 +45,7 @@ class AviaSales {
         return parsed.searchId as string;
     }
 
-    public searchTickets = async(searchId: SearchId) => {
+    public searchTickets = async(searchId: string) => {
         const response = await fetch(this.baseUrl + "/tickets?searchId=" + searchId);
         const parsed = await response.json() as { stop: boolean, tickets: tTickets };
 

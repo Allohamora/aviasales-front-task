@@ -30,4 +30,21 @@ body {
   --checkbox-checked-color: var(--blue);
 
   --checkbox-padding: 10px 20px 10px 20px;
+
+  --checkboxes-bg-color: var(--white);
+  --checkboxes-title-color: var(--black);
+
+  --ticket-bg-color: var(--white);
+  --ticket-price-color: var(--blue);
+
+  --segment-title-color: #A0B0B9;
+  --segment-text-color: var(--black);
+
+  --button-border-color: #DFE5EC;
+  --button-color: var(--black);
+  --button-bg-color: var(--white);
+
+  --button-selected-border-color: transparent;
+  --button-selected-color: var(--white);
+  --button-selected-bg-color: var(--blue);
 }
