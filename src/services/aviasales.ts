@@ -1,3 +1,4 @@
+// interface Ticket
 export interface iTicket {
     // Цена в рублях
     price: number
@@ -33,6 +34,7 @@ export interface iTicket {
     ]
   }
 
+// type Ticket
 export type tTickets = iTicket[];
 
 class AviaSales {

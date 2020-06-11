@@ -63,7 +63,9 @@ export const App = () => {
 
       <Wrap>
         {
-          tickets && <Tickets tickets={tickets} />
+          tickets 
+            ? <Tickets tickets={tickets} />
+            : <div>loading...</div>
         }
       </Wrap>
 

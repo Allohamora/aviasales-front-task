@@ -1,8 +1,8 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 
-interface ButtonProps {
-    onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
+interface TabProps {
+    onClick?: (e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void,
     selected?: boolean,
     text: string,
 };
@@ -13,16 +13,16 @@ const Container = styled.button<{selected?: boolean}>`
     outline: none;
     cursor: pointer;
 
-    border: 1px solid var(--button-border-color);
-    color: var(--button-color);
-    background-color: var(--button-bg-color);
+    border: 1px solid var(--tab-border-color);
+    color: var(--tab-color);
+    background-color: var(--tab-bg-color);
 
     flex-grow: 1;
 
     ${props => props.selected && css`
-        background-color: var(--button-selected-bg-color);
-        color: var(--button-selected-color);
-        border-color: var(--button-selected-border-color);
+        background-color: var(--tab-selected-bg-color);
+        color: var(--tab-selected-color);
+        border-color: var(--tab-selected-border-color);
     `}
 
     font-style: normal;
@@ -45,7 +45,7 @@ const Container = styled.button<{selected?: boolean}>`
     }
 `;
 
-export const Button: React.FC<ButtonProps> = props => {
+export const Tab: React.FC<TabProps> = props => {
 
     const {onClick, selected, text} = props;
 

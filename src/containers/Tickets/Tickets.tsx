@@ -1,32 +1,32 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Button } from "components/Button";
+import { Tab } from "components/Tab";
 import { tTickets } from 'services/aviasales';
 import { Ticket } from "components/Ticket";
 import { Checkboxes, iCheckboxes } from 'containers/Checkboxes';
 
-interface TicketsProps {
-    tickets: tTickets
-};
+interface Tabs {
+    [name: string]: {
+        text: string,
+        selected: boolean,
+    }
+}
 
-const Container = styled.div`
-    display: flex;
-`;
+const initTabs: Tabs = {
+    price: {
+        text: "Самый дешевый",
+        selected: false
+    },
+    speed: {
+        text: "Самый быстрый",
+        selected: true,
+    }
+}
 
-const Wrap = styled.div`
-    padding-left: 20px;
-
-    flex-grow: 1;
-`;
-
-const Buttons = styled.div`
-    display: flex;
-`;
-
-const initSideFilter: iCheckboxes = {
+const initCheckboxes: iCheckboxes = {
     all: {
         text: "Все",
-        checked: false
+        checked: true
     },
     none: {
         text: "Без пересадок",
@@ -44,95 +44,126 @@ const initSideFilter: iCheckboxes = {
         text: "3 пересадки",
         checked: false
     }
+}
+
+const Container = styled.div`
+    display: flex;
+`;
+
+const Wrap = styled.div`
+    padding-left: 20px;
+
+    flex-grow: 1;
+`;
+
+const TabsWrap = styled.div`
+    display: flex;
+`;
+
+interface TicketsProps {
+    tickets: tTickets
 };
-
-interface MainFilter {
-    [name: string]: {
-        text: string,
-        selected: boolean,
-    }
-}
-
-const initMainFilter: MainFilter = {
-    speed: {
-        text: "Самый дешевый",
-        selected: false
-    },
-    price: {
-        text: "Самый быстрый",
-        selected: false
-    }
-}
 
 export const Tickets: React.FC<TicketsProps> = props => {
     const { tickets } = props;
 
-    const [ sideFilter, setSideFilter ] = useState<iCheckboxes>(initSideFilter);
-    const [ mainFilter, setMainFilter ] = useState<MainFilter>(initMainFilter);
-
+    const [ checkboxes, setCheckboxes ] = useState<iCheckboxes>(initCheckboxes)
+    const [ tabs, setTabs ] = useState<Tabs>(initTabs);
+    
     const checkboxHandler = (name: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        const copy = {...sideFilter[name]};
-        copy.checked = e.target.checked;
-        setSideFilter({...sideFilter, [name]: copy});
+        const copy = {...checkboxes};
+        copy[name].checked = !copy[name].checked;
 
-        // TODO filter tickets
-    };
+        setCheckboxes(copy);
+    }
 
-    const selectHandler = (name: string) => (e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
-        const entries = Object.entries(mainFilter);
+    const tabHandler = (name: string) => (e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+        const copy = {...tabs};
+        const entries = Object.entries(copy);
 
-        entries.forEach( ([iName, select]) => {
-            if( iName === name ) return select.selected = true;
-
-            return select.selected = false;
+        // inner name
+        entries.forEach( ([iName, radio]) => {
+            if( iName === name ) return radio.selected = true;
+            return radio.selected = false;
         } );
 
-        setMainFilter(Object.fromEntries(entries));
-
-        // TODO filter tickets
+        setTabs(Object.fromEntries(entries));
     }
+
+    const filtered = tickets.filter( ticket => {
+        const { all, none, one, two, three } = checkboxes;
+
+        if( all.checked ) return true;
+
+        const length = ticket.segments[0].stops.length + ticket.segments[1].stops.length;
+
+        if( none.checked && length === 0 ) return true;
+        if( one.checked && length === 1 ) return true;
+        if( two.checked && length === 2 ) return true;
+        if( three.checked && length === 3 ) return true;
+
+        return false;
+    } );
+
+    const sorted = filtered.sort( (a, b) => {
+        const { speed, price } = tabs;
+
+        let first: number = 0;
+        let second: number = 0;
+
+        if( speed.selected ) {
+            first = a.segments[0].duration + a.segments[1].duration
+            second = b.segments[0].duration + b.segments[1].duration
+        }
+
+        if( price.selected ) {
+            first = a.price;
+            second = b.price;
+        }
+
+        return first - second;
+    } );
 
     return (
         <Container>
             
             <Checkboxes 
-                checkboxes={sideFilter} 
+                checkboxes={checkboxes} 
                 checkboxHandler={checkboxHandler}
                 title="Количество пересадок"    
             />
 
             <Wrap>
                 
-                <Buttons>
+                <TabsWrap>
                     {
-                        Object.entries(mainFilter).map( ([name, select]) => (
-                            <Button
-                                key={select.text}
-                                selected={select.selected}
-                                text={select.text}
-                                onClick={selectHandler(name)}
-                            />
-                        ) )
+                        Object.entries(tabs).map( ([name, tab]) => {
+                            const {text, selected} = tab;
+                            return (
+                                <Tab
+                                    key={text}
+                                    selected={selected}
+                                    text={text}
+                                    onClick={tabHandler(name)}
+                                />
+                            )
+                        } )
                     }
-                </Buttons>
+                </TabsWrap>
 
-                {
-                    tickets
-                        ? <div>
-                            {
-                                tickets.map( ticket => {
-                                    const { price, carrier, segments } = ticket;
-                                    const { date, destination } = segments[0];
-                                    const key = price + carrier + date + destination + origin;
+                <div>
+                    {
+                        sorted.map( ticket => {
+                            const { price, carrier, segments } = ticket;
+                            const { date, destination } = segments[0];
+                            const key = price + carrier + date + destination + origin;
 
-                                    return (
-                                        <Ticket key={key} ticket={ticket} />
-                                    )
-                                })
-                            }
-                        </div>
-                        : <div>Loading</div>
-                }
+                            return (
+                                <Ticket key={key} ticket={ticket} />
+                            )
+                        })
+                    }
+                </div>
 
             </Wrap>
 

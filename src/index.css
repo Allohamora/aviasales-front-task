@@ -40,11 +40,11 @@ body {
   --segment-title-color: #A0B0B9;
   --segment-text-color: var(--black);
 
-  --button-border-color: #DFE5EC;
-  --button-color: var(--black);
-  --button-bg-color: var(--white);
+  --tab-border-color: #DFE5EC;
+  --tab-color: var(--black);
+  --tab-bg-color: var(--white);
 
-  --button-selected-border-color: transparent;
-  --button-selected-color: var(--white);
-  --button-selected-bg-color: var(--blue);
+  --tab-selected-border-color: transparent;
+  --tab-selected-color: var(--white);
+  --tab-selected-bg-color: var(--blue);
 }
